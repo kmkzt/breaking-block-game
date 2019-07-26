@@ -12,22 +12,22 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    // let rand_width = random::<f64>() * 100.0;
-    // let rand_height = random::<f64>() * 100.0;
-    // let rand_x = random::<f64>() * (width);
-    // let rand_y = random::<f64>() * (height);
-
-    let mut controler_position_x = 0.0;
+    let block_width = random::<f64>() * 100.0;
+    let block_height = random::<f64>() * 100.0;
+    let block_x = random::<f64>() * (width);
+    let block_y = random::<f64>() * (height / 2.0);
+    let block_color = get_rand_rgba();
+    let ball_x = width / 2.0;
+    let ball_y = height - 50.0;
+    let mut controler_position_x = width / 2.0;
     while let Some(e) = window.next() {
-        // window.draw_2d(&e, |c, g, _device| {
-        //     clear([1.0; 4], g);
-        //     rectangle(get_rand_rgba(), // red
-        //               [rand_x, rand_y, rand_width, rand_height],
-        //               c.transform,
-        //               g);
-        // });
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
+            rectangle(block_color,
+                      [block_x, block_y, block_width, block_height],
+                      c.transform,
+                      g);
+            ellipse([0.0, 0.0, 0.5, 1.0], [ball_x, ball_y, 20.0, 20.0], c.transform, g);
             rectangle([0.0, 0.0, 1.0, 1.0], // red
                     [controler_position_x, height - 20.0, 100.0, 20.0],
                     c.transform,
@@ -50,7 +50,7 @@ fn main() {
 }
 
 
-fn get_rand_rgba() -> [f32; 4] {
+fn get_rand_rgba() -> types::Color {
     [
         random::<f32>(),
         random::<f32>(),
