@@ -45,6 +45,11 @@ fn main() {
         });
         ball_x += ball_move_x;
         ball_y += ball_move_y;
+        if let Some(ref args) = e.mouse_cursor_args() {
+            println!("{:?}", *args);
+            let [mouse_x, _mouse_y] = *args;
+            controller_position_x = mouse_x;
+        }
         if let Some(ref args) = e.press_args() {
             use piston_window::Button::Keyboard;
             
