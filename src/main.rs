@@ -12,11 +12,7 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    let block_width = random::<f64>() * 100.0;
-    let block_height = random::<f64>() * 100.0;
-    let block_x = random::<f64>() * (width);
-    let block_y = random::<f64>() * (height / 2.0);
-    let block_color = get_rand_rgba();
+    let ([block_x, block_y, block_width, block_height], block_color) = gen_block(width, height / 2.0);
     let mut ball_x = width / 2.0;
     let mut ball_y = height - 50.0;
     let mut ball_move_x = -1.0;
@@ -31,6 +27,7 @@ fn main() {
             ball_move_y *= -1.0;
         }
 
+        
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
             rectangle(block_color,
@@ -66,6 +63,16 @@ fn main() {
     }
 }
 
+fn gen_block( x: f64, y: f64) -> ([f64; 4], types::Color) {
+    ([
+        random::<f64>() * x,
+        random::<f64>() * y,
+        random::<f64>() * 100.0,
+        random::<f64>() * 100.0
+    ],
+        get_rand_rgba()
+    )
+}
 
 fn get_rand_rgba() -> types::Color {
     [
