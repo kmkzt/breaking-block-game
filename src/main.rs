@@ -33,23 +33,36 @@ fn main() {
     let controller_width = 100.0;
     let controller_position_y = height - controller_height;
     let mut controller_position_x = width / 2.0;
-    let controller_move_speed = 15.0;
+    let controller_move_speed = 30.0;
     while let Some(e) = window.next() {
-        // Frame bounce judgment.
+        // Bounce Frame 
         if (ball.x < 0.0 && ball.dx < 0.0) || (ball.x > width && ball.dx > 0.0)  {
             ball.dx *= -1.0;
         }
-        if ball.y < 0.0 && ball.dy < 0.0  {
+        if ball.y < 0.0 && ball.dy < 0.0 {
             ball.dy *= -1.0;
         }
         
-        // Controller bounce judgment.
-        if ball.dy > 0.0 && ball.y == controller_position_y {
-            if controller_position_x <= ball.x && ball.x <= controller_position_x + controller_width {
-                ball.dy *= -1.0;
-            }
+        // Bounce Controller
+        if ball.dy > 0.0 
+            && ball.y == controller_position_y 
+            && controller_position_x <= ball.x 
+            && ball.x <= controller_position_x + controller_width 
+        {
+            ball.dy *= -1.0;
         }
         
+        // Bounce Block
+        if block.x <= ball.x 
+            && ball.x <= block.x + block.w
+            && block.y <= ball.y
+            && ball.y <= block.y + block.h
+        {
+            ball.dy *= -1.0;
+            ball.dx *= -1.0;
+            *block = gen_rand_block(width, height);
+        }  
+
         // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
@@ -102,7 +115,8 @@ fn gen_rand_block( x: f64, y: f64) -> Block {
         y: random::<f64>() * y / 2.0,
         w: random::<f64>() * 100.0,
         h: random::<f64>() * 100.0,
-        color: get_rand_rgba()
+        // color: [get_rand_rgba()]
+        color: [ 0.0, 0.0, 0.0, 1.0]
     }
 }
 
