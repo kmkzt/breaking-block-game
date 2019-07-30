@@ -29,20 +29,28 @@ fn main() {
         .exit_on_esc(true).build().unwrap();
     let block = &mut gen_rand_block(width, height);
     let ball = &mut init_ball_position(width, height);
+    let controller_height = 20.0;
+    let controller_width = 100.0;
+    let controller_position_y = height - controller_height;
     let mut controller_position_x = width / 2.0;
     let controller_move_speed = 15.0;
     while let Some(e) = window.next() {
+        // Frame bounce judgment.
         if (ball.x < 0.0 && ball.dx < 0.0) || (ball.x > width && ball.dx > 0.0)  {
             ball.dx *= -1.0;
         }
         if ball.y < 0.0 && ball.dy < 0.0  {
             ball.dy *= -1.0;
         }
-        // reset
-        if ball.y > height && ball.dy > 0.0 {
-            ;
+        
+        // Controller bounce judgment.
+        if ball.dy > 0.0 && ball.y == controller_position_y {
+            if controller_position_x <= ball.x && ball.x <= controller_position_x + controller_width {
+                ball.dy *= -1.0;
+            }
         }
         
+        // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
             rectangle(block.color,
@@ -51,17 +59,23 @@ fn main() {
                       g);
             ellipse([0.0, 0.0, 0.5, 1.0], [ball.x, ball.y, 20.0, 20.0], c.transform, g);
             rectangle([0.0, 0.0, 1.0, 1.0], // red
-                    [controller_position_x, height - 20.0, 100.0, 20.0],
+                    [controller_position_x, controller_position_y, controller_width, controller_height],
                     c.transform,
                     g);
         });
+
+        // Coordinate change of ball.
         ball.x += ball.dx;
         ball.y += ball.dy;
+
+        // Mouse Event Handler
         if let Some(ref args) = e.mouse_cursor_args() {
             println!("{:?}", *args);
             let [mouse_x, _mouse_y] = *args;
             controller_position_x = mouse_x;
         }
+
+         // Key Event Handler
         if let Some(ref args) = e.press_args() {
             use piston_window::Button::Keyboard;
             
@@ -73,7 +87,10 @@ fn main() {
                 controller_position_x += controller_move_speed;
                 println!("right -> {}", controller_position_x);
             }
-
+            if *args == Keyboard(Key::Space) {
+                *ball = init_ball_position(width, height);
+                println!("Restart!!");
+            }
             
         }
     }
