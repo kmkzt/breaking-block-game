@@ -6,42 +6,57 @@ use rand::prelude::*;
 use piston_window::*;
 // use std::io;
 
+struct Block {
+    x: f64,
+    y: f64,
+    w: f64,
+    h: f64,
+    color: types::Color
+}
+
+struct Ball {
+    x: f64,
+    y: f64,
+    dx: f64,
+    dy: f64
+}
+
 fn main() {
     let width: f64 = 640.0;
     let height: f64 = 480.0;
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    let ([block_x, block_y, block_width, block_height], block_color) = gen_block(width, height / 2.0);
-    let mut ball_x = width / 2.0;
-    let mut ball_y = height - 50.0;
-    let mut ball_move_x = -1.0;
-    let mut ball_move_y = -1.0;
+    let block = &mut gen_rand_block(width, height);
+    let ball = &mut init_ball_position(width, height);
     let mut controller_position_x = width / 2.0;
     let controller_move_speed = 15.0;
     while let Some(e) = window.next() {
-        if (ball_x < 0.0 && ball_move_x < 0.0) || (ball_x > width && ball_move_x > 0.0)  {
-            ball_move_x *= -1.0;
+        if (ball.x < 0.0 && ball.dx < 0.0) || (ball.x > width && ball.dx > 0.0)  {
+            ball.dx *= -1.0;
         }
-        if (ball_y < 0.0 && ball_move_y < 0.0) || (ball_y > height && ball_move_y > 0.0)  {
-            ball_move_y *= -1.0;
+        if ball.y < 0.0 && ball.dy < 0.0  {
+            ball.dy *= -1.0;
         }
-
+        // reset
+        if ball.y > height && ball.dy > 0.0 {
+            ;
+        }
         
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
-            rectangle(block_color,
-                      [block_x, block_y, block_width, block_height],
+            rectangle(block.color,
+                      [block.x, block.y, block.w, block.h],
                       c.transform,
                       g);
-            ellipse([0.0, 0.0, 0.5, 1.0], [ball_x, ball_y, 20.0, 20.0], c.transform, g);
+            ellipse([0.0, 0.0, 0.5, 1.0], [ball.x, ball.y, 20.0, 20.0], c.transform, g);
             rectangle([0.0, 0.0, 1.0, 1.0], // red
                     [controller_position_x, height - 20.0, 100.0, 20.0],
                     c.transform,
                     g);
         });
-        ball_x += ball_move_x;
-        ball_y += ball_move_y;
+        ball.x += ball.dx;
+        ball.y += ball.dy;
         if let Some(ref args) = e.mouse_cursor_args() {
             println!("{:?}", *args);
             let [mouse_x, _mouse_y] = *args;
@@ -58,20 +73,29 @@ fn main() {
                 controller_position_x += controller_move_speed;
                 println!("right -> {}", controller_position_x);
             }
+
             
         }
     }
 }
 
-fn gen_block( x: f64, y: f64) -> ([f64; 4], types::Color) {
-    ([
-        random::<f64>() * x,
-        random::<f64>() * y,
-        random::<f64>() * 100.0,
-        random::<f64>() * 100.0
-    ],
-        get_rand_rgba()
-    )
+fn gen_rand_block( x: f64, y: f64) -> Block {
+    Block {
+        x: random::<f64>() * x,
+        y: random::<f64>() * y / 2.0,
+        w: random::<f64>() * 100.0,
+        h: random::<f64>() * 100.0,
+        color: get_rand_rgba()
+    }
+}
+
+fn init_ball_position(width: f64, height: f64) -> Ball {
+    Ball {
+        x: width / 2.0,
+        y: height - 50.0,
+        dx: -1.0,
+        dy: -1.0
+    }
 }
 
 fn get_rand_rgba() -> types::Color {
