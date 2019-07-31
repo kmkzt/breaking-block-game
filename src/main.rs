@@ -88,24 +88,29 @@ fn main() {
             controller_position_x = mouse_x;
         }
 
-         // Key Event Handler
+        // Key Event Handler
         if let Some(ref args) = e.press_args() {
             use piston_window::Button::Keyboard;
             
             if *args == Keyboard(Key::Left) {
                 controller_position_x -= controller_move_speed;
-                println!("left -> {}", controller_position_x);
+                println!("left: {}", controller_position_x);
             }
             if *args == Keyboard(Key::Right) {
                 controller_position_x += controller_move_speed;
-                println!("right -> {}", controller_position_x);
+                println!("right: {}", controller_position_x);
             }
             if *args == Keyboard(Key::Space) {
                 *ball = init_ball_position(width, height);
                 println!("Restart!!");
             }
-            
         }
+
+        // Window Resize Event Handler
+        if let Some(ref args) = e.resize_args() {
+            println!("Update Window Size: {:?}", *args);
+        }
+
     }
 }
 
@@ -113,8 +118,8 @@ fn gen_rand_block( x: f64, y: f64) -> Block {
     Block {
         x: random::<f64>() * x,
         y: random::<f64>() * y / 2.0,
-        w: random::<f64>() * 100.0,
-        h: random::<f64>() * 100.0,
+        w: 100.0,
+        h: 20.0,
         // color: [get_rand_rgba()]
         color: [ 0.0, 0.0, 0.0, 1.0]
     }
