@@ -4,6 +4,7 @@ extern crate input;
 
 use rand::prelude::*;
 use piston_window::*;
+use std::fmt::Debug;
 // use std::io;
 
 struct Block {
@@ -22,8 +23,8 @@ struct Ball {
 }
 
 fn main() {
-    let width: f64 = 640.0;
-    let height: f64 = 480.0;
+    let mut width: f64 = 640.0;
+    let mut height: f64 = 480.0;
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
@@ -31,7 +32,7 @@ fn main() {
     let ball = &mut init_ball_position(width, height);
     let controller_height = 20.0;
     let controller_width = 100.0;
-    let controller_position_y = height - controller_height;
+    let mut controller_position_y = height - controller_height;
     let mut controller_position_x = width / 2.0;
     let controller_move_speed = 30.0;
     while let Some(e) = window.next() {
@@ -109,6 +110,12 @@ fn main() {
         // Window Resize Event Handler
         if let Some(ref args) = e.resize_args() {
             println!("Update Window Size: {:?}", *args);
+            let [w, h] = args.window_size;
+            width = w;
+            height = h;
+            controller_position_y = height - controller_height;
+            controller_position_x = width / 2.0;
+            *block = gen_rand_block(width, height);
         }
 
     }
