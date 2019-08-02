@@ -68,7 +68,7 @@ fn main() {
                       [block.x, block.y, block.w, block.h],
                       c.transform,
                       g);
-            ellipse([0.0, 0.0, 0.5, 1.0], [ball.x, ball.y, 20.0, 20.0], c.transform, g);
+            ball.draw(c.transform, g);
             rectangle([0.0, 0.0, 1.0, 1.0], // red
                     [controller_position_x, controller_position_y, controller_width, controller_height],
                     c.transform,
@@ -76,8 +76,7 @@ fn main() {
         });
 
         // Coordinate change of ball.
-        ball.x += ball.dx;
-        ball.y += ball.dy;
+        ball.effect();
 
         // Mouse Event Handler
         if let Some(ref args) = e.mouse_cursor_args() {
@@ -99,7 +98,7 @@ fn main() {
                 println!("right: {}", controller_position_x);
             }
             if *args == Keyboard(Key::Space) {
-                *ball = Ball::init_ball_position(width, height);
+                *ball = Ball::new(width, height);
                 println!("Restart!!");
             }
         }
