@@ -4,8 +4,11 @@ extern crate input;
 
 use rand::prelude::*;
 use piston_window::*;
-use std::fmt::Debug;
+// use std::fmt::Debug;
 // use std::io;
+
+mod ball;
+use ball::Ball;
 
 struct Block {
     x: f64,
@@ -15,12 +18,6 @@ struct Block {
     color: types::Color
 }
 
-struct Ball {
-    x: f64,
-    y: f64,
-    dx: f64,
-    dy: f64
-}
 
 fn main() {
     let mut width: f64 = 640.0;
@@ -29,7 +26,7 @@ fn main() {
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
     let block = &mut gen_rand_block(width, height);
-    let ball = &mut init_ball_position(width, height);
+    let ball = &mut Ball::new(width, height);
     let controller_height = 20.0;
     let controller_width = 100.0;
     let mut controller_position_y = height - controller_height;
@@ -102,7 +99,7 @@ fn main() {
                 println!("right: {}", controller_position_x);
             }
             if *args == Keyboard(Key::Space) {
-                *ball = init_ball_position(width, height);
+                *ball = Ball::init_ball_position(width, height);
                 println!("Restart!!");
             }
         }
@@ -127,26 +124,17 @@ fn gen_rand_block( x: f64, y: f64) -> Block {
         y: random::<f64>() * y / 2.0,
         w: 100.0,
         h: 20.0,
-        // color: [get_rand_rgba()]
-        color: [ 0.0, 0.0, 0.0, 1.0]
+        color: get_rand_rgba()
     }
 }
 
-fn init_ball_position(width: f64, height: f64) -> Ball {
-    Ball {
-        x: width / 2.0,
-        y: height - 50.0,
-        dx: -1.0,
-        dy: -1.0
-    }
-}
 
 fn get_rand_rgba() -> types::Color {
     [
         random::<f32>(),
         random::<f32>(),
         random::<f32>(),
-        random::<f32>()
+        1.0
     ]
 }
 
