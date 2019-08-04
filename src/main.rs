@@ -7,26 +7,22 @@ use piston_window::*;
 // use std::io;
 
 mod ball;
-use ball::Ball;
-
-
 mod block;
-use block::Block;
+mod controller;
 
+use ball::Ball;
+use block::Block;
+use controller::Controller;
 
 fn main() {
-    let mut width: f64 = 640.0;
-    let mut height: f64 = 480.0;
+    let width: f64 = 640.0;
+    let height: f64 = 480.0;
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    let block = &mut Block::new_rand(width, height / 2.0);
-    let ball = &mut Ball::new(width, height);
-    let controller_height = 20.0;
-    let controller_width = 100.0;
-    let mut controller_position_y = height - controller_height;
-    let mut controller_position_x = width / 2.0;
-    let controller_move_speed = 30.0;
+    let mut block = Block::new_rand(width, height / 2.0);
+    let mut ball = Ball::new(width, height);
+    let mut controller = Controller::new(width, height);
     while let Some(e) = window.next() {
         // Bounce Frame 
         if (ball.x < 0.0 && ball.dx < 0.0) || (ball.x > width && ball.dx > 0.0)  {
@@ -38,9 +34,9 @@ fn main() {
         
         // Bounce Controller
         if ball.dy > 0.0 
-            && ball.y == controller_position_y 
-            && controller_position_x <= ball.x 
-            && ball.x <= controller_position_x + controller_width 
+            && ball.y == controller.y
+            && controller.x <= ball.x 
+            && ball.x <= controller.x + controller.w
         {
             ball.dy *= -1.0;
         }
@@ -53,7 +49,7 @@ fn main() {
         {
             ball.dy *= -1.0;
             ball.dx *= -1.0;
-            block.rand(width, height);
+            block.rand(width, height / 2.0);
         }  
 
         // Draw a screen.
@@ -61,10 +57,7 @@ fn main() {
             clear([1.0; 4], g);
             block.draw(c.transform, g);
             ball.draw(c.transform, g);
-            rectangle([0.0, 0.0, 1.0, 1.0], // red
-                    [controller_position_x, controller_position_y, controller_width, controller_height],
-                    c.transform,
-                    g);
+            controller.draw(c.transform, g);
         });
 
         // Coordinate change of ball.
@@ -74,7 +67,7 @@ fn main() {
         if let Some(ref args) = e.mouse_cursor_args() {
             println!("{:?}", *args);
             let [mouse_x, _mouse_y] = *args;
-            controller_position_x = mouse_x;
+            controller.x = mouse_x;
         }
 
         // Key Event Handler
@@ -82,15 +75,15 @@ fn main() {
             use piston_window::Button::Keyboard;
             
             if *args == Keyboard(Key::Left) {
-                controller_position_x -= controller_move_speed;
-                println!("left: {}", controller_position_x);
+                controller.x -= controller.move_speed;
+                println!("left: {}", controller.x);
             }
             if *args == Keyboard(Key::Right) {
-                controller_position_x += controller_move_speed;
-                println!("right: {}", controller_position_x);
+                controller.x += controller.move_speed;
+                println!("right: {}", controller.x);
             }
             if *args == Keyboard(Key::Space) {
-                *ball = Ball::new(width, height);
+                ball = Ball::new(width, height);
                 println!("Restart!!");
             }
         }
@@ -99,10 +92,7 @@ fn main() {
         if let Some(ref args) = e.resize_args() {
             println!("Update Window Size: {:?}", *args);
             let [w, h] = args.window_size;
-            width = w;
-            height = h;
-            controller_position_y = height - controller_height;
-            controller_position_x = width / 2.0;
+            controller = Controller::new(w, h);
             block.rand(width, height / 2.0);
         }
 
