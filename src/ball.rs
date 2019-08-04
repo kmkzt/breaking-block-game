@@ -7,8 +7,7 @@ pub struct Ball {
     pub dy: f64
 }
 
-impl Ball
-{
+impl Ball {
     pub fn new(width: f64, height: f64) -> Self {
         Ball {
             x: width / 2.0,

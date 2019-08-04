@@ -2,7 +2,6 @@ extern crate piston_window;
 extern crate rand;
 extern crate input;
 
-use rand::prelude::*;
 use piston_window::*;
 // use std::fmt::Debug;
 // use std::io;
@@ -10,13 +9,9 @@ use piston_window::*;
 mod ball;
 use ball::Ball;
 
-struct Block {
-    x: f64,
-    y: f64,
-    w: f64,
-    h: f64,
-    color: types::Color
-}
+
+mod block;
+use block::Block;
 
 
 fn main() {
@@ -25,7 +20,7 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    let block = &mut gen_rand_block(width, height);
+    let block = &mut Block::new_rand(width, height / 2.0);
     let ball = &mut Ball::new(width, height);
     let controller_height = 20.0;
     let controller_width = 100.0;
@@ -58,16 +53,13 @@ fn main() {
         {
             ball.dy *= -1.0;
             ball.dx *= -1.0;
-            *block = gen_rand_block(width, height);
+            block.rand(width, height);
         }  
 
         // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
-            rectangle(block.color,
-                      [block.x, block.y, block.w, block.h],
-                      c.transform,
-                      g);
+            block.draw(c.transform, g);
             ball.draw(c.transform, g);
             rectangle([0.0, 0.0, 1.0, 1.0], // red
                     [controller_position_x, controller_position_y, controller_width, controller_height],
@@ -111,31 +103,12 @@ fn main() {
             height = h;
             controller_position_y = height - controller_height;
             controller_position_x = width / 2.0;
-            *block = gen_rand_block(width, height);
+            block.rand(width, height / 2.0);
         }
 
     }
 }
 
-fn gen_rand_block( x: f64, y: f64) -> Block {
-    Block {
-        x: random::<f64>() * x,
-        y: random::<f64>() * y / 2.0,
-        w: 100.0,
-        h: 20.0,
-        color: get_rand_rgba()
-    }
-}
-
-
-fn get_rand_rgba() -> types::Color {
-    [
-        random::<f32>(),
-        random::<f32>(),
-        random::<f32>(),
-        1.0
-    ]
-}
 
 // fn get_keyboard_event() -> io::Result<String> {
 //     let mut input = String::new();
