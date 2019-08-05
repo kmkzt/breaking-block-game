@@ -25,28 +25,15 @@ fn main() {
     let mut controller = Controller::new(width, height);
     while let Some(e) = window.next() {
         // Bounce Frame 
-        if (ball.x < 0.0 && ball.dx < 0.0) || (ball.x > width && ball.dx > 0.0)  {
-            ball.dx *= -1.0;
-        }
-        if ball.y < 0.0 && ball.dy < 0.0 {
-            ball.dy *= -1.0;
-        }
+        ball.bounce_frame(width, height);
         
         // Bounce Controller
-        if ball.dy > 0.0 
-            && ball.y == controller.y
-            && controller.x <= ball.x 
-            && ball.x <= controller.x + controller.w
-        {
+        if controller.touch(&ball) {
             ball.dy *= -1.0;
         }
         
         // Bounce Block
-        if block.x <= ball.x 
-            && ball.x <= block.x + block.w
-            && block.y <= ball.y
-            && ball.y <= block.y + block.h
-        {
+        if block.touch(&ball) {
             ball.dy *= -1.0;
             ball.dx *= -1.0;
             block.rand(width, height / 2.0);

@@ -3,6 +3,7 @@ extern crate rand;
 
 use rand::prelude::*;
 use piston_window::*;
+use crate::ball::Ball;
 
 pub struct Block {
     pub x: f64,
@@ -10,6 +11,17 @@ pub struct Block {
     pub w: f64,
     pub h: f64,
     pub color: types::Color
+}
+const Top: u8 = 0;
+const Right: u8 = 1;
+const Bottom: u8 = 2;
+const Left: u8 = 3;
+
+pub enum Touch {
+    Top,
+    Rigtht,
+    Bottom,
+    Left
 }
 
 impl Block {
@@ -41,6 +53,12 @@ impl Block {
         *self = Block::new_rand(mx, my);
     }
 
+    pub fn touch(&self, ball: &Ball) -> bool {
+        self.x <= ball.x 
+            && ball.x <= self.x + self.w
+            && self.y <= ball.y
+            && ball.y <= self.y + self.h 
+    }
 }
 
 fn get_rand_rgba() -> types::Color {

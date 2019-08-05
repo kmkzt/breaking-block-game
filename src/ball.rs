@@ -25,4 +25,13 @@ impl Ball {
         self.x += self.dx;
         self.y += self.dy;
     }
+
+    pub fn bounce_frame(&mut self, width: f64, _height: f64) {
+         if (self.x < 0.0 && self.dx < 0.0) || (self.x > width && self.dx > 0.0)  {
+            self.dx *= -1.0;
+        }
+        if self.y < 0.0 && self.dy < 0.0 {
+            self.dy *= -1.0;
+        }
+    }
 }

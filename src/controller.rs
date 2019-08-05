@@ -1,4 +1,5 @@
 use piston_window::{rectangle, math, G2d};
+use crate::ball::Ball;
 
 pub struct Controller {
     pub w: f64,
@@ -27,6 +28,13 @@ impl Controller {
                     [self.x, self.y, self.w, self.h],
                     t,
                     g);
+    }
+
+    pub fn touch(&self, ball: &Ball) -> bool {
+        ball.dy > 0.0 
+            && ball.y == self.y
+            && self.x <= ball.x 
+            && ball.x <= self.x + self.w
     }
 
 }
