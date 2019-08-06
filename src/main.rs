@@ -11,7 +11,7 @@ mod block;
 mod controller;
 
 use ball::Ball;
-use block::Block;
+use block::{Block, Hit};
 use controller::Controller;
 
 fn main() {
@@ -36,8 +36,19 @@ fn main() {
         if block.touch(&ball) {
             ball.dy *= -1.0;
             ball.dx *= -1.0;
-            block.rand(width, height / 2.0);
-        }  
+            block.rand(width, height);
+        }
+        // match block.touch(&ball) {
+        //     Some(Hit::Bottom) | Some(Hit::Top) => {
+        //         ball.dy *= -1.0;
+        //         block.rand(width, height);
+        //     },
+        //     Some(Hit::Right) | Some(Hit::Left) => {
+        //         ball.dx *= -1.0;
+        //         block.rand(width, height);
+        //     }
+        //     _ => {}
+        // }
 
         // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {

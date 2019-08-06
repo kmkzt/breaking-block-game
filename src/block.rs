@@ -12,16 +12,12 @@ pub struct Block {
     pub h: f64,
     pub color: types::Color
 }
-const Top: u8 = 0;
-const Right: u8 = 1;
-const Bottom: u8 = 2;
-const Left: u8 = 3;
 
-pub enum Touch {
-    Top,
-    Rigtht,
-    Bottom,
-    Left
+pub enum Hit {
+    Top = 0,
+    Right = 1,
+    Bottom = 2,
+    Left = 3,
 }
 
 impl Block {
@@ -54,10 +50,33 @@ impl Block {
     }
 
     pub fn touch(&self, ball: &Ball) -> bool {
-        self.x <= ball.x 
-            && ball.x <= self.x + self.w
-            && self.y <= ball.y
-            && ball.y <= self.y + self.h 
+        let left = ball.x - self.x;
+        let right = self.x + self.w - ball.x;
+        let top =  ball.y - self.y;
+        let bottom = self.y + self.h - ball.y;
+
+        left >= 0.0 && right >= 0.0 && top >= 0.0 && bottom >= 0.0
+        
+        // if left >0 
+        //     && ball.x <= self.x + self.w
+        //     && self.y <= ball.y
+        //     && ball.y <= self.y + self.h 
+        // {
+        //     println!("touch: ");
+        //     if self.x <= ball.x {
+        //         Some(Hit::Left)
+        //     }
+        //     if self.x + self.w >= ball.x {
+        //         Some(Hit::Right)
+        //     }
+        //     if self.y <= ball.y {
+        //         Some(Hit::Top)
+        //     }
+        //     if self.y + self.h >= ball.y {
+        //         Some(Hit::Bottom)
+        //     }
+        // }
+        // None
     }
 }
 
