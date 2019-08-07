@@ -81,6 +81,36 @@ impl Block {
     }
 }
 
+
+enum BlockStatus {
+    Block,
+    Empty
+}
+pub struct Blocks {
+    pub status: BlockStatus,
+    pub next: NextBlock
+}
+enum NextBlock {
+    Box<Blocks>,
+    Empty
+}
+
+impl Blocks {
+    pub fn break(&mut self) {
+        let nextBlock = *self.next;
+        match nextBlock {
+            Empty =>{
+                self.status = Empty;
+                self.next = Empty;
+            },
+            Blocks =>  {
+                self.status = nextBlock.status;
+                self.next = nextBlock.next;
+            }
+        }
+    }
+}
+
 fn get_rand_rgba() -> types::Color {
     [
         random::<f32>(),
