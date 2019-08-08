@@ -9,10 +9,12 @@ use piston_window::*;
 mod ball;
 mod block;
 mod controller;
+mod linear_node;
 
 use ball::Ball;
 use block::{Block, Hit};
 use controller::Controller;
+use linear_node::LinearNode;
 
 fn main() {
     let width: f64 = 640.0;
@@ -20,7 +22,9 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-    let mut block = Block::new_rand(width, height / 2.0);
+
+    let mut blocks = LinearNode::Empty;
+    blocks.add(Block::new_rand(width, height / 2.0));
     let mut ball = Ball::new(width, height);
     let mut controller = Controller::new(width, height);
     while let Some(e) = window.next() {
@@ -33,22 +37,31 @@ fn main() {
         }
         
         // Bounce Block
-        match block.touch(&ball) {
-            Some(Hit::Bottom) | Some(Hit::Top) => {
-                ball.dy *= -1.0;
-                block.rand(width, height);
-            },
-            Some(Hit::Right) | Some(Hit::Left) => {
-                ball.dx *= -1.0;
-                block.rand(width, height);
-            }
-            _ => {}
+        match blocks {
+            LinearNode::Empty => blocks.add(Block::new_rand(width, height / 2.0)),
+            LinearNode::NonEmpty(ref mut block) => {
+                match block.node.touch(&ball) {
+                    Some(Hit::Bottom) | Some(Hit::Top) => {
+                        ball.dy *= -1.0;
+                        block.node.rand(width, height);
+                    },
+                    Some(Hit::Right) | Some(Hit::Left) => {
+                        ball.dx *= -1.0;
+                        block.node.rand(width, height);
+                    }
+                    _ => {}
+                }
+            }   
         }
+        
 
         // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {
             clear([1.0; 4], g);
-            block.draw(c.transform, g);
+            match blocks {
+                LinearNode::Empty => {},
+                LinearNode::NonEmpty(ref mut block) => block.node.draw(c.transform, g)
+            }
             ball.draw(c.transform, g);
             controller.draw(c.transform, g);
         });
@@ -86,7 +99,11 @@ fn main() {
             println!("Update Window Size: {:?}", *args);
             let [w, h] = args.window_size;
             controller = Controller::new(w, h);
-            block.rand(width, height / 2.0);
+            
+            match blocks {
+                LinearNode::Empty => {},
+                LinearNode::NonEmpty(ref mut block) => block.node.rand(width, height / 2.0)
+            }
         }
 
     }
