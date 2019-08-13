@@ -5,6 +5,7 @@ use std::iter::*;
 use rand::prelude::*;
 use piston_window::*;
 use crate::ball::Ball;
+use crate::draw::Draw2d;
 
 const BLOCK_WIDTH: f64 = 100.0;
 const BLOCK_HEIGHT: f64 = 100.0;
@@ -22,6 +23,12 @@ pub enum Hit {
     Right = 1,
     Bottom = 2,
     Left = 3,
+}
+
+impl Draw2d for Block {
+    fn draw2d(&self, t: math::Matrix2d, g: &mut G2d) {
+        rectangle(self.color, [self.x, self.y, self.w, self.h], t, g);
+    }
 }
 
 impl Block {
@@ -46,7 +53,7 @@ impl Block {
     }
 
     pub fn draw(&self, t: math::Matrix2d, g: &mut G2d) {
-        rectangle(self.color, [self.x, self.y, self.w, self.h], t, g);
+        self.draw2d(t, g);
     }
 
     pub fn rand(&mut self, mx: f64, my: f64) {
@@ -77,36 +84,6 @@ impl Block {
             2 => Some(Hit::Top),
             3 => Some(Hit::Bottom),
             _ => None
-        }
-    }
-}
-
-
-enum BlockStatus {
-    Block,
-    Empty
-}
-pub struct Blocks {
-    pub status: BlockStatus,
-    pub next: NextBlock
-}
-enum NextBlock {
-    Box<Blocks>,
-    Empty
-}
-
-impl Blocks {
-    pub fn break(&mut self) {
-        let nextBlock = *self.next;
-        match nextBlock {
-            Empty =>{
-                self.status = Empty;
-                self.next = Empty;
-            },
-            Blocks =>  {
-                self.status = nextBlock.status;
-                self.next = nextBlock.next;
-            }
         }
     }
 }
