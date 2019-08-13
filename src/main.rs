@@ -10,10 +10,13 @@ mod ball;
 mod block;
 mod controller;
 mod linear_node;
+mod draw;
+mod stage;
 
 use ball::Ball;
-use block::{Block, Hit};
+use block::{Hit};
 use controller::Controller;
+use stage::Stage;
 // use linear_node::LinearNode;
 
 fn main() {
@@ -22,12 +25,8 @@ fn main() {
     let mut window: PistonWindow =
         WindowSettings::new("Breaking blocks", [width as u32, height as u32])
         .exit_on_esc(true).build().unwrap();
-
-    let mut blocks = Vec::new();
-    for _ in 0..2 {
-        blocks.push(Block::new_rand(width, height));
-    }
-
+    let mut stage = Stage::new(1);
+    let mut blocks = stage.gen_blocks(width, height);
     // blocks.add(Block::new_rand(width, height / 2.0));
     let mut ball = Ball::new(width, height);
     let mut controller = Controller::new(width, height);
