@@ -90,6 +90,16 @@ fn main() {
         if let Some(ref args) = e.press_args() {
             use piston_window::Button::Keyboard;
             
+            if *args == Keyboard(Key::Up) {
+                stage.level_up(1);
+                blocks = stage.gen_blocks(width, height);
+                println!("level up: {}", stage.level);
+            }
+             if *args == Keyboard(Key::Down) {
+                stage.level_down(1);
+                blocks = stage.gen_blocks(width, height);
+                println!("level down: {}", stage.level);
+            }
             if *args == Keyboard(Key::Left) {
                 controller.x -= controller.move_speed;
                 println!("left: {}", controller.x);
