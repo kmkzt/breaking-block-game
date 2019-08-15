@@ -45,7 +45,7 @@ impl Block {
     pub fn new_rand(mx: f64, my: f64) -> Self {
         Block {
             x: random::<f64>() * mx,
-            y: random::<f64>() * my,
+            y: random::<f64>() * my * 2.0 / 3.0,
             w: BLOCK_WIDTH,
             h: BLOCK_HEIGHT,
             color: get_rand_rgba()
@@ -61,11 +61,12 @@ impl Block {
     }
 
     pub fn touch(&self, ball: &Ball) -> Option<Hit> {
-        let hit_info = [ball.x - self.x, self.x + self.w - ball.x, ball.y - self.y, self.y + self.h - ball.y];
+        // [Left, right, top, bottom]
+        let block_distance = [ball.x + ball.size - self.x, self.x + self.w - ball.x, ball.y + ball.size - self.y, self.y + self.h - ball.y];
         let mut near_index = 4;
         let mut near_point = 5.0;
         
-        for (i, &p) in hit_info.iter().enumerate() {
+        for (i, &p) in block_distance.iter().enumerate() {
             if p < 0.0 {
                 near_index = 4;
                 break;

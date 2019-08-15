@@ -14,6 +14,7 @@ pub struct Controller {
 
 const CONTROLER_WIDTH: f64 = 100.0;
 const CONTROLER_HEIGHT: f64 = 20.0;
+const CONTROLER_OFFSET_Y: f64 = CONTROLER_HEIGHT + 30.0;
 const SWING_WIDTH: f64 = 1.5;
 
 #[derive(Debug)]
@@ -37,7 +38,7 @@ impl Controller {
             w: CONTROLER_WIDTH,
             h: CONTROLER_HEIGHT,
             x: (width - CONTROLER_WIDTH) / 2.0,
-            y: height - CONTROLER_HEIGHT,
+            y: height - CONTROLER_OFFSET_Y,
             move_speed: 30.0
         }
     }
@@ -48,9 +49,10 @@ impl Controller {
 
     pub fn touch(&self, ball: &Ball) -> Option<Bounce> {
         match ball.dy > 0.0 
-            && ball.y == self.y
-            && self.x <= ball.x 
-            && ball.x <= self.x + self.w 
+            && ball.y + (ball.size / 2.0 ) >= self.y
+            && ball.y + (ball.size / 2.0 ) <= self.y + CONTROLER_HEIGHT
+            && ball.x >= self.x
+            && ball.x <= self.x + self.w
         {
             true => {
                 let dx = 2.0 * (ball.x - self.x) / self.w - 1.0;
@@ -62,8 +64,6 @@ impl Controller {
             },
             false => None
         }   
-        
-        
         
     }
 
