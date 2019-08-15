@@ -35,8 +35,12 @@ fn main() {
         ball.bounce_frame(width, height);
         
         // Bounce Controller
-        if controller.touch(&ball) {
-            ball.dy *= -1.0;
+        match controller.touch(&ball) {
+            Some(bounce) => {
+                ball.dy *= bounce.dy;
+                ball.dx *= bounce.dx;
+            },
+            None => {}
         }
         
         // Bounce Block

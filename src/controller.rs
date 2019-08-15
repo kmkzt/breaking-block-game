@@ -1,4 +1,5 @@
 use piston_window::{rectangle, math, G2d};
+use std::option::Option;
 use crate::ball::Ball;
 use crate::draw::Draw2d;
 
@@ -12,6 +13,11 @@ pub struct Controller {
 
 const CONTROLER_WIDTH: f64 = 100.0;
 const CONTROLER_HEIGHT: f64 = 20.0;
+
+pub struct Bounce {
+    pub dx: f64,
+    pub dy: f64
+}
 
 impl Draw2d for Controller {
     fn draw2d(&self, t: math::Matrix2d, g: &mut G2d) {
@@ -37,11 +43,22 @@ impl Controller {
        self.draw2d(t, g)
     }
 
-    pub fn touch(&self, ball: &Ball) -> bool {
-        ball.dy > 0.0 
+    pub fn touch(&self, ball: &Ball) -> Option<Bounce> {
+        let bounce = Bounce {
+            dx: (ball.x - self.x) - (self.w / 2.0 ),
+            dy: -1.0
+        };
+        match ball.dy > 0.0 
             && ball.y == self.y
             && self.x <= ball.x 
-            && ball.x <= self.x + self.w
+            && ball.x <= self.x + self.w 
+        {
+            true => Some(bounce),
+            false => None
+        }   
+        
+        
+        
     }
 
 }
