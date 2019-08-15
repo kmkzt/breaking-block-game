@@ -3,6 +3,7 @@ use std::option::Option;
 use crate::ball::Ball;
 use crate::draw::Draw2d;
 
+#[derive(Debug)]
 pub struct Controller {
     pub w: f64,
     pub h: f64,
@@ -13,7 +14,9 @@ pub struct Controller {
 
 const CONTROLER_WIDTH: f64 = 100.0;
 const CONTROLER_HEIGHT: f64 = 20.0;
+const SWING_WIDTH: f64 = 1.5;
 
+#[derive(Debug)]
 pub struct Bounce {
     pub dx: f64,
     pub dy: f64
@@ -44,16 +47,19 @@ impl Controller {
     }
 
     pub fn touch(&self, ball: &Ball) -> Option<Bounce> {
-        let bounce = Bounce {
-            dx: (ball.x - self.x) - (self.w / 2.0 ),
-            dy: -1.0
-        };
         match ball.dy > 0.0 
             && ball.y == self.y
             && self.x <= ball.x 
             && ball.x <= self.x + self.w 
         {
-            true => Some(bounce),
+            true => {
+                let dx = 2.0 * (ball.x - self.x) / self.w - 1.0;
+                let bounce = Bounce {
+                    dx: dx * SWING_WIDTH,
+                    dy: -1.0
+                };
+                Some(bounce)
+            },
             false => None
         }   
         

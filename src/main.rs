@@ -38,7 +38,7 @@ fn main() {
         match controller.touch(&ball) {
             Some(bounce) => {
                 ball.dy *= bounce.dy;
-                ball.dx *= bounce.dx;
+                ball.dx = bounce.dx;
             },
             None => {}
         }
@@ -85,7 +85,6 @@ fn main() {
 
         // Mouse Event Handler
         if let Some(ref args) = e.mouse_cursor_args() {
-            println!("{:?}", *args);
             let [mouse_x, _mouse_y] = *args;
             controller.x = mouse_x;
         }
@@ -97,30 +96,24 @@ fn main() {
             if *args == Keyboard(Key::Up) {
                 stage.level_up(1);
                 blocks = stage.gen_blocks(width, height);
-                println!("level up: {}", stage.level);
             }
              if *args == Keyboard(Key::Down) {
                 stage.level_down(1);
                 blocks = stage.gen_blocks(width, height);
-                println!("level down: {}", stage.level);
             }
             if *args == Keyboard(Key::Left) {
                 controller.x -= controller.move_speed;
-                println!("left: {}", controller.x);
             }
             if *args == Keyboard(Key::Right) {
                 controller.x += controller.move_speed;
-                println!("right: {}", controller.x);
             }
             if *args == Keyboard(Key::Space) {
                 ball = Ball::new(width, height);
-                println!("Restart!!");
             }
         }
 
         // Window Resize Event Handler
         if let Some(ref args) = e.resize_args() {
-            println!("Update Window Size: {:?}", *args);
             let [w, h] = args.window_size;
             controller = Controller::new(w, h);
             

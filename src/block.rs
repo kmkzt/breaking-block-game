@@ -8,7 +8,7 @@ use crate::ball::Ball;
 use crate::draw::Draw2d;
 
 const BLOCK_WIDTH: f64 = 100.0;
-const BLOCK_HEIGHT: f64 = 100.0;
+const BLOCK_HEIGHT: f64 = 20.0;
 
 pub struct Block {
     pub x: f64,

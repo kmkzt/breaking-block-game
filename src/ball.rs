@@ -3,6 +3,7 @@ extern crate piston_window;
 use piston_window::{ellipse, math, G2d};
 use crate::draw::Draw2d;
 
+#[derive(Debug)]
 pub struct Ball {
     pub x: f64,
     pub y: f64,
