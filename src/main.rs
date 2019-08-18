@@ -124,15 +124,14 @@ fn main() {
 
         // Draw a screen.
         window.draw_2d(&e, |c, g, _device| {
+            clear([1.0; 4], g);
+             for block in &blocks {
+                block.draw(c.transform, g)
+            }
+            ball.draw(c.transform, g);
+            controller.draw(c.transform, g);
             match status {
-                Status::Action => {
-                    clear([1.0; 4], g);
-                    for block in &blocks {
-                        block.draw(c.transform, g)
-                    }
-                    ball.draw(c.transform, g);
-                    controller.draw(c.transform, g);
-                },
+                Status::Action => {},
                 Status::Stop => {}
             }
         });
