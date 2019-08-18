@@ -19,6 +19,8 @@ use controller::Controller;
 use stage::Stage;
 // use linear_node::LinearNode;
 
+const CURSOR_OFFSET_VERTICAL: f64 = 20.0;
+
 enum Status {
     Stop,
     Action,
@@ -80,15 +82,14 @@ fn main() {
 
         // Mouse Event Handler
         if let Some(ref args) = e.mouse_cursor_args() {
-            println!("{:?}" , *args);
-            let window_size = window.size();
             let [mouse_x, mouse_y] = *args;
-            if mouse_x < 0.1 || mouse_y < 0.1 || mouse_y > window_size.height || mouse_x > window_size.width {
+            let window_size = window.size();
+            if mouse_x < 1 || mouse_y < CURSOR_OFFSET_VERTICAL || mouse_y > window_size.height - CURSOR_OFFSET_VERTICAL || mouse_x > window_size.width - 1 {
                 status = Status::Stop;
             } else {
                 status = Status::Action;
             }
-            controller.x = mouse_x;
+            controller.x = mouse_x - controller.w / 2.0;
         }
 
         // Key Event Handler
