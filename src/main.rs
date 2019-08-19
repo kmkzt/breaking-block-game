@@ -96,23 +96,28 @@ fn main() {
 
         // Key Event Handler
         match e.press_args() {
-            Some(Button::Keyboard(Key::Up)) => {
-                stage.level_up(1);
-                blocks = stage.gen_blocks(width, height);
+            Some(Button::Keyboard(data)) => {
+                match data {
+                    Key::Up => {
+                        stage.level_up(1);
+                        blocks = stage.gen_blocks(width, height);
+                    },
+                    Key::Down => {
+                        stage.level_down(1);
+                        blocks = stage.gen_blocks(width, height);
+                    },
+                    Key::Left => {
+                        controller.x -= controller.move_speed;
+                    },
+                    Key::Right => {
+                        controller.x += controller.move_speed;
+                    },
+                    Key::Space => {
+                        ball = Ball::new(width, height);
+                    }
+                    _ => {}
+                }
             },
-            Some(Button::Keyboard(Key::Down)) => {
-                stage.level_down(1);
-                blocks = stage.gen_blocks(width, height);
-            },
-            Some(Button::Keyboard(Key::Left)) => {
-                controller.x -= controller.move_speed;
-            },
-            Some(Button::Keyboard(Key::Right)) => {
-                controller.x += controller.move_speed;
-            },
-            Some(Button::Keyboard(Key::Space)) => {
-                ball = Ball::new(width, height);
-            }
             _ => {}
         }
 
