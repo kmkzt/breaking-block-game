@@ -68,7 +68,7 @@ impl Controller {
     }
 
     pub fn handle_move(&mut self, x: f64) {
-        self.x = x;
+        self.x = x - self.w / 2.0;
     }
 
 }
