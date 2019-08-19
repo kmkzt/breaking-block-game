@@ -81,46 +81,53 @@ fn main() {
        
 
         // Mouse Event Handler
-        if let Some(ref args) = e.mouse_cursor_args() {
-            let [mouse_x, mouse_y] = *args;
-            let window_size = window.size();
-            if mouse_x < 1 || mouse_y < CURSOR_OFFSET_VERTICAL || mouse_y > window_size.height - CURSOR_OFFSET_VERTICAL || mouse_x > window_size.width - 1 {
-                status = Status::Stop;
-            } else {
-                status = Status::Action;
-            }
-            controller.x = mouse_x - controller.w / 2.0;
+        match e.mouse_cursor_args() {
+            Some([mouse_x, mouse_y]) => {
+                let window_size = window.size();
+                if mouse_x < 1.0 || mouse_y < CURSOR_OFFSET_VERTICAL || mouse_y > window_size.height - CURSOR_OFFSET_VERTICAL || mouse_x > window_size.width - 1.0 {
+                    status = Status::Stop;
+                } else {
+                    status = Status::Action;
+                }
+                controller.handle_move(mouse_x);
+            },
+            _ => {}
         }
 
         // Key Event Handler
-        if let Some(ref args) = e.press_args() {
-            if *args == Button::Keyboard(Key::Up) {
+        match e.press_args() {
+            Some(Button::Keyboard(Key::Up)) => {
                 stage.level_up(1);
                 blocks = stage.gen_blocks(width, height);
-            }
-             if *args == Button::Keyboard(Key::Down) {
+            },
+            Some(Button::Keyboard(Key::Down)) => {
                 stage.level_down(1);
                 blocks = stage.gen_blocks(width, height);
-            }
-            if *args == Button::Keyboard(Key::Left) {
+            },
+            Some(Button::Keyboard(Key::Left)) => {
                 controller.x -= controller.move_speed;
-            }
-            if *args == Button::Keyboard(Key::Right) {
+            },
+            Some(Button::Keyboard(Key::Right)) => {
                 controller.x += controller.move_speed;
-            }
-            if *args == Button::Keyboard(Key::Space) {
+            },
+            Some(Button::Keyboard(Key::Space)) => {
                 ball = Ball::new(width, height);
             }
+            _ => {}
         }
 
         // Window Resize Event Handler
-        if let Some(ref args) = e.resize_args() {
-            let [w, h] = args.window_size;
-            controller = Controller::new(w, h);
-            
-            for block in &mut blocks {
-                block.rand(width, height / 2.0)
+        match e.resize_args() {
+            Some(ResizeArgs {
+                window_size: [w, h], 
+                draw_size: _draw_size 
+            }) => {
+                controller = Controller::new(w, h);
+                for block in &mut blocks {
+                    block.rand(width, height / 2.0)
+                }
             }
+            _ => {}
         }
 
         // Draw a screen.

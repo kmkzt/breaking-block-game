@@ -67,4 +67,8 @@ impl Controller {
         
     }
 
+    pub fn handle_move(&mut self, x: f64) {
+        self.x = x;
+    }
+
 }
