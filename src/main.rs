@@ -38,6 +38,9 @@ fn main() {
     let mut controller = Controller::new(width, height);
     let mut status = Status::Stop;
     while let Some(e) = window.next() {
+        // update size
+        let Size { width, height } = window.size();
+        
         // Bounce Frame 
         ball.bounce_frame(width, height);
         
@@ -69,6 +72,10 @@ fn main() {
                 }
                 _ => {}
             }
+        }
+        if blocks.len() == 0 {
+            stage.level_up(1);
+            blocks = stage.gen_blocks(width, height);
         }
 
         // Coordinate change of ball.
